@@ -1,5 +1,22 @@
 const request = require('supertest'); 
 const server = require('./server.js'); 
+const userjeff = request.agent();
+
+function loginUser() {
+    return function(done) {
+        userjeff
+          .post("http://localhost:3300/api/auth/login")
+          .send({ username: "jeff", password: "password" })
+          .expect(200)
+          .end(onResponse);
+
+        function onResponse(err, res) {
+           if (err) return done(err);
+           return done();
+        }
+    };
+};
+
 
 describe('All Server Tests', () => {
 
@@ -13,12 +30,15 @@ describe('All Server Tests', () => {
       expect(res.status).toBe(401);
     });
 
+
+
     it("should be json", async () => {
       const res = await request(server).get("/api/jokes");
       expect(res.type).toBe("application/json");
     });
 
   });
+  
 
     describe("Testing Registration Functions", () => {
 
